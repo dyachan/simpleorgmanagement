@@ -15,7 +15,19 @@ class Proyect extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'email',
-        'password',
+        'name',
+        'color',
+        'preview',
     ];
+
+   /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
 }
