@@ -10,15 +10,17 @@
         @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
         @endforeach
-        <form action="/api/addproyect" method="POST">
-            <label for="name">nombre:</label>
+        <form action="/register" method="POST">
+            @csrf
+            <label for="name">name:</label>
             <input type="text" name="name"><br>
+            <label for="email">email:</label>
+            <input type="text" name="email"><br>
 
-            <label for="color">color:</label>
-            <input type="color" name="color"><br>
-
-            <label for="preview">imagen:</label>
-            <input type="file" name="preview"><br><br>
+            <label for="password">password:</label>
+            <input type="password" name="password"><br>
+            <label for="password_confirmation">password_confirmation:</label>
+            <input type="password" name="password_confirmation"><br>
 
             <input type="submit" value="Ingresar">
         </form> 

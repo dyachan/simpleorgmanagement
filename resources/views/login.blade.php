@@ -7,11 +7,14 @@
         <title>Simple Organization Management</title>
     </head>
     <body>
-        <form action="">
-            <label for="email">Email:</label>
+        asdasdasdasd
+        <form action="/login" method="POST">
+            <label for="email">email:</label>
             <input type="text" name="email"><br>
-            <label for="pass">Last name:</label>
-            <input type="text" name="pass"><br><br>
+
+            <label for="password">password:</label>
+            <input type="password" name="password"><br>
+
             <input type="submit" value="Ingresar">
         </form> 
     </body>

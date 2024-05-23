@@ -7,8 +7,11 @@
         <title>Simple Organization Management</title>
     </head>
     <body>
+        @foreach ($errors as $error)
+            <li>{{ $error }}</li>
+        @endforeach
         <form action="/api/addworklog" method="POST">
-            <input type="hidden" name="user_id" value="1">
+            <input type="hidden" name="user_id" value="{{ $user_id }}">
     
             <label for="start">inicio:</label>
             <input type="datetime-local" name="start"><br>
@@ -16,14 +19,15 @@
             <input type="datetime-local" name="end"><br>
 
             <label for="proyect">proyecto:</label>
-            <select name="proyect">
-                <option value="value1">Value 1</option>
-                <option value="value2" selected>Value 2</option>
-                <option value="value3">Value 3</option>
+            <select name="proyect_id">
+                <option value="null">-</option>
+                @foreach ($proyects as $proyect)
+                    <option value="{{$proyect->id}}">{{$proyect->name}}</option>
+                @endforeach
             </select><br>
 
             <label for="description">descripción:</label>
-            <input type="text" name="description"><br><br>
+            <textarea name="description" rows="4" cols="30"></textarea>
 
             <input type="submit" value="Ingresar">
         </form> 

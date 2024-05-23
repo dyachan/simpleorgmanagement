@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('proyects', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('color');
-            $table->string('preview');
+            $table->string('color')->nullable();
+            $table->string('preview')->nullable();
             $table->timestamps();
         });
     }

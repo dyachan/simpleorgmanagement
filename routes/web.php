@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WorklogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,13 +18,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/login', function () {
-    return view('login');
+Route::get('/logout', function () {
+    return view('auth.logout');
 });
 
-Route::get('/addworklog', function () {
-    return view('addWorklog');
-});
+Route::get('/addworklog', [WorklogController::class, 'addView']);
+Route::post('/addworklog', [WorklogController::class, 'add']);
+
+// Route::get('/viewworklog', function () {
+//     return view('viewWorklog');
+// });
+Route::get('/viewproyect', [WorklogController::class, 'get']);
 
 Route::get('/addproyect', function () {
     return view('addProyect');
