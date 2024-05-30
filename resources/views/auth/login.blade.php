@@ -7,9 +7,13 @@
         <title>Simple Organization Management</title>
     </head>
     <body>
-        @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-        @endforeach
+        @if ($errors->any())
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        @endif
         <form action="/login" method="POST">
             @csrf
             <label for="email">email:</label>

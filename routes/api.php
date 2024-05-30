@@ -17,8 +17,8 @@ use App\Http\Controllers\ProyectController;
 |
 */
 
-Route::post('/addworklog', [WorklogController::class, 'add']);
-Route::post('/addproyect', [ProyectController::class, 'add']);
+// Route::post('/addworklog', [WorklogController::class, 'add']);
+// Route::post('/addproyect', [ProyectController::class, 'add']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -13,12 +13,12 @@ Gestión Simple Organización es un servicio minimalista para monitorear persona
 - usuarios pueden ver sus proyectos actuales y pasados
 - poder visualizar el avance de cada proyecto y sus personas involucradas
 
-# Etapa 3
+# Etapa 3 (trello)
 - proyectos se pueden separar en tareas
 - usuarios pueden ser vinculados con una tarea
 - usuarios pueden registrar tiempo de trabajo en tareas
 - usuarios pueden ver sus tareas 
 - poder visualizar el avance de cada tarea
 
-# Etapa 4
+# Etapa 4 (gantt)
 - tareas pueden ser ordenadas en el tiempo
