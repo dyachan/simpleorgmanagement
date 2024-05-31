@@ -24,3 +24,5 @@ use App\Http\Controllers\ProyectController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/getproyectinputs', [ProyectController::class, 'getNames']);

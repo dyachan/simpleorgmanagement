@@ -7,20 +7,6 @@
         <title>Simple Organization Management</title>
 
         <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
-        <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
-
-        <style>
-            .toastui-calendar-section-button{
-                display: none;
-            }
-            .toastui-calendar-detail-item{
-                display: none;
-            }
-            .toastui-calendar-detail-item:first-child{
-                display: block;
-            }
-        </style>
-
     </head>
     <body>
         <div id="calendar" style="height: 600px;"></div>

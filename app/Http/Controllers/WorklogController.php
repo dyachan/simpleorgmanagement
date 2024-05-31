@@ -18,7 +18,7 @@ use App\Models\Proyect;
 class WorklogController extends Controller
 {
     public function addView(Request $request): view {
-        return view('addWorklog', ['user_id' => Auth::user()->id, 'proyects' => Proyect::all()]);
+        return view('addWorklog');
     }
 
     public function add(Request $request): RedirectResponse {
@@ -30,7 +30,7 @@ class WorklogController extends Controller
             'description' => 'required'
         ]);
 
-        $validator->after(function ($validator) {
+        $validator->after(function ($validator) use ($request) {
             if ($request->start > $request->end) {
                 $validator->errors()->add(
                     'end', 'end date must be greater than start date'
@@ -40,26 +40,16 @@ class WorklogController extends Controller
 
         $validator->validate();
 
-        // if ($validator->fails()) {
-        //     return redirect('addworklog')
-        //                 ->withErrors($validator)
-        //                 ->withInput();
-        // }
- 
-        // if ($validator->fails()) {
-        //     return $validator->errors();
-        //     return WorklogController::addView($request, $validator->errors());
-        // }
-        
         Worklog::create([
             'start' => $request->start,
             'end' => $request->end,
             'fk_user' => $request->user_id,
             'fk_proyect' => $request->proyect_id,
-            'description' => $request->$description
+            'description' => $request->description
         ]);
 
-        return WorklogController::get($request);
+        return redirect()->action([WorklogController::class, 'get']);
+        // return WorklogController::get($request);
     }
 
     public function get(Request $request){
