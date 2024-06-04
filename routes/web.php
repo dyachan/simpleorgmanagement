@@ -28,7 +28,7 @@ Route::post('/addworklog', [WorklogController::class, 'add']);
 // Route::get('/viewworklog', function () {
 //     return view('viewWorklog');
 // });
-Route::get('/viewproyect', [WorklogController::class, 'get']);
+Route::get('/viewworklog', [WorklogController::class, 'get']);
 
 Route::get('/addproyect', function () {
     return view('addProyect');

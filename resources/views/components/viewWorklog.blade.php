@@ -1,5 +1,6 @@
 <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
-<template>
+<template id="som-viewworklog-template">
+    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
     <style>
         .toastui-calendar-section-button{
             display: none;
@@ -12,28 +13,12 @@
         }
     </style>
 
-    <div id="calendar" style="height: 600px;"></div>
+    <div style="height: 100%;"></div>
 </template>
 
 <script>
-    function twoDigits(num){
-        if(parseInt(num) < 10){
-            return "0"+num;
-        }
-        return num;
-    }
-    function beautyTime(datetime){
-        return twoDigits(datetime.getHours()) + ":" + twoDigits(datetime.getSeconds());
-    }
-
-    const colors = [
-        '#03bd9e', '#c1bde8', '#ceace6', '#daadae', '#d6c49e', '#93c085', '#80ffff', '#ffa87d'
-    ]
-
-    const Calendar = tui.Calendar;
-    const container = document.getElementById('calendar');
     const options = {
-        defaultView: 'month',
+        defaultView: 'week',
         isReadOnly: true,
         timezone: {
             zones: [
@@ -42,15 +27,15 @@
                 }
             ],
         },
-        calendars: [
-            @foreach ($users as $user)
-            {
-                id: "{{ $user->email }}",
-                name: "{{ $user->email }}",
-                backgroundColor: colors[Math.floor(Math.random() * colors.length)], 
-            },
-            @endforeach
-        ],
+        // calendars: [
+        //     @foreach ($users as $user)
+        //     {
+        //         id: "{{ $user->email }}",
+        //         name: "{{ $user->email }}",
+        //         backgroundColor: SOM_COLOR[Math.floor(Math.random() * SOM_COLOR.length)], 
+        //     },
+        //     @endforeach
+        // ],
         week: {
           startDayOfWeek: 1,
           dayNames: [],
@@ -66,58 +51,75 @@
           collapseDuplicateEvents: false,
         },
     };
-
-    const calendar = new Calendar(container, options);
-    calendar.setOptions({
-        useDetailPopup: true,
-    });
-    // calendar.setOptions({
-    //   template: {
-    //     time(event) {
-    //       const { start, end, title } = event;
-    //       return `<span style="color: white;">${title}</span>`;
-    //     }
-    //   },
-    // });
-    calendar.setOptions({
-      template: {
-        popupDetailTitle({ title }) {
-            return "<span>"+title.split(" Y ").map( (task) => "<span>"+task+"</span>").join("<br>")+"</span>"
-        },
-        popupDetailDate({ start, end }) {
-            return beautyTime(start) + " - " + beautyTime(end);
-        },
-        popupDetailAttendees(params) {
-            return params.calendarId;
-        },
-        popupDetailBody({ body }) {
-            return "";
-        },
-      },
-    });
-    calendar.createEvents([
-        @foreach ($worklogs as $worklog)
-            {
-                id: "{{ $worklog->id }}",
-                calendarId: "{{ $worklog->user->email }}",
-                title: '{{ str_replace("\n", " Y ", $worklog->description) }}',
-                start: "{{ $worklog->start }}",
-                end: "{{ $worklog->end }}",
-            },
-        @endforeach
-    ]);
     
     class SOM_ViewWorklogComponent extends HTMLElement {
+        _changeAtt(name, value){
+            console.log(name, value);
+            if(name == "view"){
+                this._calendar.setOptions({
+                    defaultView: value,
+                });
+            }
+        }
+
         constructor() {
             super();
 
-            let template = document.getElementById("som-addworklog-template");
+            let template = document.getElementById("som-viewworklog-template");
             let templateContent = template.content;
 
-            const shadowRoot = this.attachShadow({ mode: "open" });
-            shadowRoot.appendChild(templateContent.cloneNode(true));
+            this._shadowRoot = this.attachShadow({ mode: "open" });
+            this._shadowRoot.appendChild(templateContent.cloneNode(true));
+
+            this._container = this._shadowRoot.querySelectorAll("div")[0];
+
+            this._calendar = new tui.Calendar(this._container, options);
+
+            this._calendar.setOptions({
+                useDetailPopup: true,
+            });
+
+            this._calendar.setOptions({
+                template: {
+                    popupDetailTitle({ title }) {
+                        return "<span>"+title.split(" Y ").map( (task) => "<span>"+task+"</span>").join("<br>")+"</span>"
+                    },
+                    popupDetailDate({ start, end }) {
+                        return beautyTime(start) + " - " + beautyTime(end);
+                    },
+                    popupDetailAttendees(params) {
+                        return params.calendarId;
+                    },
+                    popupDetailBody({ body }) {
+                        return "";
+                    },
+                },
+            });
+            // calendar.createEvents([
+            //     @foreach ($worklogs as $worklog)
+            //         {
+            //             id: "{{ $worklog->id }}",
+            //             calendarId: "{{ $worklog->user->email }}",
+            //             title: '{{ str_replace("\n", " Y ", $worklog->description) }}',
+            //             start: "{{ $worklog->start }}",
+            //             end: "{{ $worklog->end }}",
+            //         },
+            //     @endforeach
+            // ]);
+        }
+        
+        connectedCallback(){
+            console.log("asdasd");
+            console.log(this.getAttribute("som-view"));
+            this._changeAtt("view", this.getAttribute("som-view") || "week");
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            if(name == "view" && oldValue != newValue){
+                this._changeAtt(name, newValue);
+            }
         }
     }
 
-    customElements.define("som-addworklog", SOM_AddWorklogComponent);
+    customElements.define("som-viewworklog", SOM_ViewWorklogComponent);
 </script>
