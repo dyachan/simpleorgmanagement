@@ -26,3 +26,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/getproyectinputs', [ProyectController::class, 'getNames']);
+Route::post('/getuserworklog', [WorklogController::class, 'getUserWorklog']);

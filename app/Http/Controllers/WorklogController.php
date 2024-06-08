@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Http\Resources\WorklogResource;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\UserWorklogsResource;
 use App\Models\Worklog;
 use App\Models\User;
 use App\Models\Proyect;
@@ -58,5 +59,9 @@ class WorklogController extends Controller
             'worklogs' => Worklog::all(),
             'users' => User::all()
         ]);
+    }
+
+    public function getUserWorklog(Request $request){
+        return new UserWorklogsResource(User::where("id", $request->userID)->first());
     }
 }

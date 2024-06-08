@@ -18,7 +18,7 @@
 
 <script>
     const options = {
-        defaultView: 'week',
+        defaultView: 'month',
         isReadOnly: true,
         timezone: {
             zones: [
@@ -54,12 +54,58 @@
     
     class SOM_ViewWorklogComponent extends HTMLElement {
         _changeAtt(name, value){
-            console.log(name, value);
             if(name == "view"){
-                this._calendar.setOptions({
-                    defaultView: value,
-                });
+                this._options.defaultView = value;
             }
+            if(name == "view"){
+                this._options.defaultView = value;
+            }
+        }
+
+        _fetchUserWorklog(userID){
+            return fetch("/api/getuserworklog", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({"userID": userID})})
+            .then((response) => response.json())
+            .then(({data}) => {
+                // add to calendar
+                // let tempCal = []; // need a temp array because array become inmutable after setOptions
+                // this._userCalendars.forEach((e) => tempCal.push(e));
+                // tempCal.push({
+                //     id: data.id,
+                //     name: data.user,
+                //     backgroundColor: SOM_COLOR[Math.floor(Math.random() * SOM_COLOR.length)], 
+                // });
+                // this._userCalendars = tempCal;
+
+                this._userCalendars.push({
+                    id: data.id,
+                    name: data.user,
+                    backgroundColor: SOM_COLOR[Math.floor(Math.random() * SOM_COLOR.length)], 
+                });
+
+                data.worklogs.forEach( (worklog) => 
+                    this._userWorklogs.push({
+                        id: worklog.id,
+                        calendarId: data.id,
+                        title: worklog.description.replaceAll("\n", " Y "),
+                        start: worklog.start,
+                        end: worklog.end,
+                    })
+                );
+
+            }).catch((error) => {
+                console.log("error", error);
+            })
+        }
+
+        _addUsersWorklogs(){
+            this._userCalendars = [];
+            this._userWorklogs = [];
+            this._users = (this.getAttribute("som-users") || "").replaceAll(" ", "").split(",");
+            if(this._users.length == 1 && this._users[0] == ""){ // if no user selected, select current loggued user.
+                this._users = ["{{ Auth::user()->id }}"];
+            }
+
+            return this._users.map( (userID) => this._fetchUserWorklog(userID));
         }
 
         constructor() {
@@ -73,13 +119,34 @@
 
             this._container = this._shadowRoot.querySelectorAll("div")[0];
 
-            this._calendar = new tui.Calendar(this._container, options);
-
-            this._calendar.setOptions({
+            this._users = [];
+            this._userCalendars = [];
+            this._userWorklogs = [];
+            this._options = {
+                defaultView: 'month',
+                isReadOnly: true,
                 useDetailPopup: true,
-            });
-
-            this._calendar.setOptions({
+                timezone: {
+                    zones: [
+                        {
+                            timezoneName: 'America/Santiago'
+                        }
+                    ],
+                },
+                week: {
+                    startDayOfWeek: 1,
+                    dayNames: [],
+                    narrowWeekend: false,
+                    workweek: false,
+                    showNowIndicator: false,
+                    showTimezoneCollapseButton: false,
+                    timezonesCollapsed: false,
+                    hourStart: 0,
+                    hourEnd: 24,
+                    eventView: ['time'],
+                    taskView: false,
+                    collapseDuplicateEvents: false,
+                },
                 template: {
                     popupDetailTitle({ title }) {
                         return "<span>"+title.split(" Y ").map( (task) => "<span>"+task+"</span>").join("<br>")+"</span>"
@@ -92,9 +159,10 @@
                     },
                     popupDetailBody({ body }) {
                         return "";
-                    },
-                },
-            });
+                    }
+                }
+            };
+
             // calendar.createEvents([
             //     @foreach ($worklogs as $worklog)
             //         {
@@ -109,16 +177,28 @@
         }
         
         connectedCallback(){
-            console.log("asdasd");
-            console.log(this.getAttribute("som-view"));
             this._changeAtt("view", this.getAttribute("som-view") || "week");
+            Promise.all(this._addUsersWorklogs()).then( () => {
+                this._calendar = new tui.Calendar(this._container, this._options);
+
+                // user calendars
+                this._calendar.setOptions({
+                    calendars: this._userCalendars
+                });
+
+                // add worklogs
+                this._calendar.createEvents(this._userWorklogs);
+
+            });
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
-            if(name == "view" && oldValue != newValue){
+            if(oldValue != newValue){
                 this._changeAtt(name, newValue);
             }
         }
+
+
     }
 
     customElements.define("som-viewworklog", SOM_ViewWorklogComponent);

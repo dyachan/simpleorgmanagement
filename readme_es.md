@@ -22,3 +22,10 @@ Gestión Simple Organización es un servicio minimalista para monitorear persona
 
 # Etapa 4 (gantt)
 - tareas pueden ser ordenadas en el tiempo
+
+
+# requerimientos específicos
+- hay un límite de tiempo para modificar el worklog (2 semanas) (superadmin infinito)
+- poder agregar feriados por persona y licencias (solo superadmin)
+- poder asignar cantidad de horas a trabajar por usuario
+- calculo de vacaciones por usuario

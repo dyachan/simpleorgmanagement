@@ -12,7 +12,7 @@
         
         @include('components.viewWorklog')
 
-        <som-viewworklog style="height: 800px; display: block;" som-view="month"><som-viewworklog>
+        <som-viewworklog style="height: 800px; display: block;" som-view="month" som-users="1, 2, 3"></som-viewworklog>
 
    </body>
 </html>
