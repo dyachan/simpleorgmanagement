@@ -1,21 +1,3 @@
-<script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.js"></script>
-<template id="som-viewworklog-template">
-    <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
-    <style>
-        .toastui-calendar-section-button{
-            display: none;
-        }
-        .toastui-calendar-detail-item{
-            display: none;
-        }
-        .toastui-calendar-detail-item:first-child{
-            display: block;
-        }
-    </style>
-
-    <div style="height: 100%;"></div>
-</template>
-
 <template id="som-viewcalendar-template">
     <style>
         * {
@@ -23,6 +5,7 @@
         }
 
         .maincalendar{
+            width: 100%;
             display: grid;
             grid-template-columns: 1fr repeat(5, 2fr) 1fr;
             gap: 5px 5px;
@@ -35,6 +18,7 @@
             justify-content: center;
             align-items: flex-start;
             gap: 2px;
+            overflow: hidden;
         }
 
         .maincalendar article.header{
@@ -78,6 +62,10 @@
             border-width: medium;
             border-style: solid;
             cursor: pointer;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .maincalendar article label span.worklogtime{
@@ -143,11 +131,12 @@
                     let startDate = new Date(worklog.start);
                     let daysBetweenFirstDay = Math.floor((startDate - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
                     
-                    console.log(this._firstDate, this._firstDate.getTime(), startDate, startDate.getTime(), daysBetweenFirstDay);
                     if(daysBetweenFirstDay >= 0 && daysBetweenFirstDay < 7 * this._weeks){
                         this._dayElems[daysBetweenFirstDay].appendChild(this._createDayWidget({
                             text: worklog.description.replaceAll("\n", " Y "),
-                            time: beautyDeltaTime(startDate, new Date(worklog.end))
+                            time: beautyDeltaTime(startDate, new Date(worklog.end)),
+                            // borderColor: getDeterministicColor(data.user),
+                            backgroundColor: getDeterministicColor(worklog.proyect+"55")
                         }));
                     }
                 });
@@ -193,7 +182,7 @@
             return day;
         }
 
-        _createDayWidget({text="", time=null, backgroundColor="#0000", borderColor="#0001"}){
+        _createDayWidget({text="", time=null, backgroundColor="#0000", borderColor="#00000000"}){
             let widget = document.createElement("label");
 
             if(time){
