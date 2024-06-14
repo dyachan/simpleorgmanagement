@@ -129,32 +129,28 @@
             .then((response) => response.json())
             .then(({data}) => {
                 // add to calendar
-                // let tempCal = []; // need a temp array because array become inmutable after setOptions
-                // this._userCalendars.forEach((e) => tempCal.push(e));
-                // tempCal.push({
-                //     id: data.id,
+                
+                
+
+                // this._userCalendars.push({
+                //     id: data.user,
                 //     name: data.user,
-                //     backgroundColor: SOM_COLOR[Math.floor(Math.random() * SOM_COLOR.length)], 
+                //     color: SOM_COLOR[Math.floor(Math.random() * SOM_COLOR.length)], 
+                //     backgroundColor: "#000000", 
                 // });
-                // this._userCalendars = tempCal;
 
-                this._userCalendars.push({
-                    id: data.user,
-                    name: data.user,
-                    color: SOM_COLOR[Math.floor(Math.random() * SOM_COLOR.length)], 
-                    backgroundColor: "#000000", 
+                data.worklogs.forEach( (worklog) => {
+                    let startDate = new Date(worklog.start);
+                    let daysBetweenFirstDay = Math.floor((startDate - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
+                    
+                    console.log(this._firstDate, this._firstDate.getTime(), startDate, startDate.getTime(), daysBetweenFirstDay);
+                    if(daysBetweenFirstDay >= 0 && daysBetweenFirstDay < 7 * this._weeks){
+                        this._dayElems[daysBetweenFirstDay].appendChild(this._createDayWidget({
+                            text: worklog.description.replaceAll("\n", " Y "),
+                            time: beautyDeltaTime(startDate, new Date(worklog.end))
+                        }));
+                    }
                 });
-
-                data.worklogs.forEach( (worklog) => 
-                    this._userWorklogs.push({
-                        id: worklog.id,
-                        calendarId: data.user,
-                        title: worklog.description.replaceAll("\n", " Y "),
-                        start: worklog.start,
-                        end: worklog.end,
-                    })
-                );
-
             }).catch((error) => {
                 console.log("error", error);
             })
@@ -243,77 +239,43 @@
             this._shadowRoot.appendChild(templateContent.cloneNode(true));
 
             this._container = this._shadowRoot.querySelectorAll("section")[0];
-            // this._container = this._shadowRoot.querySelectorAll("div")[0];
 
-            // this._users = [];
-            // this._userCalendars = [];
-            // this._userWorklogs = [];
-            // this._options = {
-            //     defaultView: 'month',
-            //     isReadOnly: true,
-            //     useDetailPopup: true,
-            //     timezone: {
-            //         zones: [
-            //             {
-            //                 timezoneName: 'America/Santiago'
-            //             }
-            //         ],
-            //     },
-            //     week: {
-            //         startDayOfWeek: 1,
-            //         hourStart: 0,
-            //         hourEnd: 24,
-            //         eventView: ['time'],
-            //         taskView: false,
-            //         collapseDuplicateEvents: false,
-            //     },
-            //     month: {
-            //         visibleEventCount: 6
-            //     },
-            //     template: {
-            //         popupDetailTitle({ title }) {
-            //             return "<span>"+title.split(" Y ").map( (task) => "<span>"+task+"</span>").join("<br>")+"</span>"
-            //         },
-            //         popupDetailDate({ start, end }) {
-            //             return beautyTime(start) + " - " + beautyTime(end);
-            //         },
-            //         popupDetailAttendees(params) {
-            //             console.log(params);
-            //             return params.calendarId;
-            //         },
-            //     }
-            // };
+            this._firstDate = null;
+            this._weeks = 8;
+            this._dayElems = [];
         }
         
         connectedCallback(){
 
-            let firstDate = new Date();
+            this._firstDate = new Date();
             if(this.getAttribute("som-firstdate")){
-                firstDate = new Date(this.getAttribute("som-firstdate"));
-                firstDate.setDate(firstDate.getDate() - firstDate.getDay());
+                this._firstDate = new Date(this.getAttribute("som-firstdate"));
+                this._firstDate.setDate(this._firstDate.getDate() - this._firstDate.getDay());
             } else {
-                firstDate.setDate(firstDate.getDate() - firstDate.getDay() - 7*3);
+                this._firstDate.setDate(this._firstDate.getDate() - this._firstDate.getDay() - 7*Math.floor(this._weeks/2));
             }
 
-            for (let day = 0; day < 7 * 8; day++) {
-                let dayElem = this._createMonthDay(firstDate);
-                dayElem.appendChild(this._createDayWidget({text: "hola "+day, time: "6h40"}));
-                this._container.appendChild(dayElem);
+            let currentDate = new Date(this._firstDate.getTime());
+            for (let day = 0; day < 7 * this._weeks; day++) {
+                this._dayElems.push(this._createMonthDay(currentDate));
+                // this._dayElems[day].appendChild(this._createDayWidget({text: "hola "+day, time: "6h40"}));
+                this._container.appendChild(this._dayElems[day]);
 
-                firstDate.setDate(firstDate.getDate() +1);
+                currentDate.setDate(currentDate.getDate() +1);
             }
 
             // this._changeAtt("view", this.getAttribute("som-view") || "week");
-            // Promise.all(this._addUsersWorklogs()).then( () => {
-            //     this._calendar = new tui.Calendar(this._container, this._options);
-            //     // user calendars
-            //     this._calendar.setOptions({
-            //         calendars: this._userCalendars
-            //     });
 
-            //     // add worklogs
-            //     this._calendar.createEvents(this._userWorklogs);
-            // });
+            Promise.all(this._addUsersWorklogs()).then( () => {
+                // this._calendar = new tui.Calendar(this._container, this._options);
+                // // user calendars
+                // this._calendar.setOptions({
+                //     calendars: this._userCalendars
+                // });
+
+                // // add worklogs
+                // this._calendar.createEvents(this._userWorklogs);
+            });
         }
 
         attributeChangedCallback(name, oldValue, newValue) {

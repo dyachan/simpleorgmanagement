@@ -55,10 +55,7 @@ class WorklogController extends Controller
 
     public function get(Request $request){
         // return Worklog::all();
-        return view('viewWorklog', [
-            'worklogs' => Worklog::all(),
-            'users' => User::all()
-        ]);
+        return view('viewWorklog');
     }
 
     public function getUserWorklog(Request $request){
