@@ -1,3 +1,4 @@
+@include('components.worklogDialog')
 <template id="som-viewcalendar-template">
     <style>
         * {
@@ -75,15 +76,6 @@
             margin-right: 2px;
         }
 
-        dialog.mainContainer {
-            border-width: medium;
-            border-style: solid;
-            background-color: white;
-
-            height: 200px;
-            width: 200px;
-        }
-
     </style>
 
     <section class="maincalendar">
@@ -95,11 +87,6 @@
         <article class="header">Vie</article>
         <article class="header">Sáb</article>
     </section>
-</template>
-
-<template id="som-worklogdialog-template">
-    <dialog class="mainContainer">
-    </dialog>
 </template>
 
 <script>
@@ -116,10 +103,6 @@
             return fetch("/api/getuserworklog", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({"userID": userID})})
             .then((response) => response.json())
             .then(({data}) => {
-                // add to calendar
-                
-                
-
                 // this._userCalendars.push({
                 //     id: data.user,
                 //     name: data.user,
@@ -133,10 +116,11 @@
                     
                     if(daysBetweenFirstDay >= 0 && daysBetweenFirstDay < 7 * this._weeks){
                         this._dayElems[daysBetweenFirstDay].appendChild(this._createDayWidget({
-                            text: worklog.description.replaceAll("\n", " Y "),
+                            text: worklog.description,
                             time: beautyDeltaTime(startDate, new Date(worklog.end)),
                             // borderColor: getDeterministicColor(data.user),
-                            backgroundColor: getDeterministicColor(worklog.proyect+"55")
+                            backgroundColor: getDeterministicColor(worklog.proyect)+"CC",
+                            username: data.user
                         }));
                     }
                 });
@@ -182,7 +166,7 @@
             return day;
         }
 
-        _createDayWidget({text="", time=null, backgroundColor="#0000", borderColor="#00000000"}){
+        _createDayWidget({text="", time=null, backgroundColor="#0000", borderColor="#00000000", username=null}){
             let widget = document.createElement("label");
 
             if(time){
@@ -197,19 +181,22 @@
 
             let contentElm = document.createElement("span");
             contentElm.classList.add("worklogcontent");
-            contentElm.textContent = text;
+            contentElm.textContent = text.trim().split("\n").join(" & ");
             widget.appendChild(contentElm);
 
             // append worklog dialog
-            widget.appendChild(document.getElementById("som-worklogdialog-template").content.cloneNode(true));
-
-            let worklogDialogElem = widget.querySelectorAll("dialog")[0];
-            worklogDialogElem.style.borderColor = borderColor;
-            widget.addEventListener("click", () => {
+            let worklogDialogElem = document.createElement("som-worklogdialog");
+            worklogDialogElem.setAttribute("som-user", username);
+            worklogDialogElem.setAttribute("som-background", backgroundColor);
+            worklogDialogElem.setAttribute("som-info", text);
+            widget.appendChild(worklogDialogElem);
+            
+            widget.addEventListener("click", (evt) => {
                 if(worklogDialogElem.open){
                     worklogDialogElem.close();
                 } else {
                     worklogDialogElem.show();
+                    worklogDialogElem.moveTo(evt.clientX, evt.clientY);
                 }
             })
             
