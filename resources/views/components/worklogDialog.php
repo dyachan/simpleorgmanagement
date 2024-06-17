@@ -1,5 +1,9 @@
 <template id="som-worklogdialog-template">
   <style>
+    * {
+        box-sizing: border-box;
+    }
+
     dialog {
       position: fixed;
       background-color: #0005;
@@ -14,20 +18,28 @@
 
     section {
       position: absolute;
-      border-width: medium;
-      border-style: solid;
       background-color: white;
 
       height: 200px;
       width: 323px; /* Golden ratio: w = h * 1.618 */
     }
+
+    article {
+      width: 100%;
+      height: 100%;
+      border-width: medium;
+      border-style: solid;
+    }
+
   </style>
 
   <dialog>
     <section>
-      <span>&rarr;</span><span class="username"></span>
-      <pre></pre>
-      <button>modificar</button>
+      <article>
+        <span>&rarr;</span><span class="username"></span>
+        <pre></pre>
+        <button>modificar</button>
+      </article>
     </section>
   </dialog>
 </template>
@@ -56,10 +68,10 @@
         let bcolor = getDeterministicColor(this.getAttribute("som-user"));
         this._username.textContent = this.getAttribute("som-user");
       }
-      this._box.style.borderColor = bcolor;
+      this._box.firstElementChild.style.borderColor = bcolor;
 
       if(this.getAttribute("som-background")){
-        this._box.style.backgroundColor = this.getAttribute("som-background");
+        this._box.firstElementChild.style.backgroundColor = this.getAttribute("som-background");
       }
 
       if(this.getAttribute("som-info")){
