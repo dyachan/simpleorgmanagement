@@ -22,6 +22,8 @@
 
       height: 200px;
       width: 323px; /* Golden ratio: w = h * 1.618 */
+
+      border-radius: 5px;
     }
 
     article {
@@ -29,6 +31,15 @@
       height: 100%;
       border-width: medium;
       border-style: solid;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    button {
+      align-self: flex-end;
     }
 
   </style>
@@ -36,8 +47,22 @@
   <dialog>
     <section>
       <article>
-        <span>&rarr;</span><span class="username"></span>
+        <span>
+          <span>&#8594;</span><span class="username"></span>
+        </span>
+  
+        <span>
+          <span>&#8608;</span><span class="proyect"></span>
+        </span>
+  
         <pre></pre>
+    
+        <span>
+          <span>&#9201;</span> <span class="initdate"></span> <span>&#8596;</span> <span class="enddate"></span>
+        </span>
+    
+        <div style="flex-grow: 2;"></div>
+
         <button>modificar</button>
       </article>
     </section>
@@ -60,6 +85,9 @@
       this._box = this._shadowRoot.querySelectorAll("section")[0];
       this._info = this._shadowRoot.querySelectorAll("pre")[0];
       this._username = this._box.getElementsByClassName("username")[0];
+      this._proyect = this._box.getElementsByClassName("proyect")[0];
+      this._initdate = this._box.getElementsByClassName("initdate")[0];
+      this._enddate = this._box.getElementsByClassName("enddate")[0];
     }
     connectedCallback(){
       // set border color for user
@@ -69,6 +97,18 @@
         this._username.textContent = this.getAttribute("som-user");
       }
       this._box.firstElementChild.style.borderColor = bcolor;
+
+      if(this.getAttribute("som-proyect")){
+        this._proyect.textContent = this.getAttribute("som-proyect");
+      }
+
+      if(this.getAttribute("som-initdate")){
+        this._initdate.textContent = this.getAttribute("som-initdate");
+      }
+
+      if(this.getAttribute("som-enddate")){
+        this._enddate.textContent = this.getAttribute("som-enddate");
+      }
 
       if(this.getAttribute("som-background")){
         this._box.firstElementChild.style.backgroundColor = this.getAttribute("som-background");

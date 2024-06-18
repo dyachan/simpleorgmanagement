@@ -89,6 +89,12 @@
     </section>
 </template>
 
+<template>
+    <article class="monthday">
+        <p class="date"></p>
+    </article>
+</template>
+
 <script>
     const _MONTH = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
     class SOM_ViewWorklogComponent extends HTMLElement {
@@ -112,15 +118,19 @@
 
                 data.worklogs.forEach( (worklog) => {
                     let startDate = new Date(worklog.start);
+                    let endDate = new Date(worklog.end);
                     let daysBetweenFirstDay = Math.floor((startDate - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
                     
                     if(daysBetweenFirstDay >= 0 && daysBetweenFirstDay < 7 * this._weeks){
                         this._dayElems[daysBetweenFirstDay].appendChild(this._createDayWidget({
                             text: worklog.description,
-                            time: beautyDeltaTime(startDate, new Date(worklog.end)),
+                            time: beautyDeltaTime(startDate, endDate),
                             // borderColor: getDeterministicColor(data.user),
                             backgroundColor: getDeterministicColor(worklog.proyect)+"CC",
-                            username: data.user
+                            username: data.user,
+                            proyect: worklog.proyect,
+                            initdate: beautyTime(startDate),
+                            enddate: beautyTime(endDate)
                         }));
                     }
                 });
@@ -141,11 +151,14 @@
         }
 
         _createMonthDay(date=null){
+            // let day = document.getElementById("som-viewcalendar-template").content.cloneNode(true);
+
             let day = document.createElement("article");
             day.classList.add("monthday");
 
             if(date){
                 let dateElem = document.createElement("p");
+                // let dateElem = day.querySelectorAll("p")[0];
                 dateElem.classList.add("date");
                 dateElem.textContent = date.getDate();
                 
@@ -166,7 +179,7 @@
             return day;
         }
 
-        _createDayWidget({text="", time=null, backgroundColor="#0000", borderColor="#00000000", username=null}){
+        _createDayWidget({text="", time=null, backgroundColor="#0000", borderColor="#00000000", username=null, proyect=null, initdate=null, enddate=null}){
             let widget = document.createElement("label");
 
             if(time){
@@ -187,6 +200,9 @@
             // append worklog dialog
             let worklogDialogElem = document.createElement("som-worklogdialog");
             worklogDialogElem.setAttribute("som-user", username);
+            worklogDialogElem.setAttribute("som-proyect", proyect);
+            worklogDialogElem.setAttribute("som-initdate", initdate);
+            worklogDialogElem.setAttribute("som-enddate", enddate);
             worklogDialogElem.setAttribute("som-background", backgroundColor);
             worklogDialogElem.setAttribute("som-info", text);
             widget.appendChild(worklogDialogElem);
