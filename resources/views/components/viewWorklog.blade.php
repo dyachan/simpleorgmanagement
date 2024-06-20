@@ -1,4 +1,4 @@
-@include('components.worklogDialog')
+@include('components.monthday')
 <template id="som-viewcalendar-template">
     <style>
         * {
@@ -89,14 +89,8 @@
     </section>
 </template>
 
-<template>
-    <article class="monthday">
-        <p class="date"></p>
-    </article>
-</template>
-
 <script>
-    const _MONTH = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+    // const _MONTH = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
     class SOM_ViewWorklogComponent extends HTMLElement {
 
         _changeAtt(name, value){
@@ -122,7 +116,7 @@
                     let daysBetweenFirstDay = Math.floor((startDate - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
                     
                     if(daysBetweenFirstDay >= 0 && daysBetweenFirstDay < 7 * this._weeks){
-                        this._dayElems[daysBetweenFirstDay].appendChild(this._createDayWidget({
+                        this._dayElems[daysBetweenFirstDay].addWorklog({
                             text: worklog.description,
                             time: beautyDeltaTime(startDate, endDate),
                             // borderColor: getDeterministicColor(data.user),
@@ -131,7 +125,7 @@
                             proyect: worklog.proyect,
                             initdate: beautyTime(startDate),
                             enddate: beautyTime(endDate)
-                        }));
+                        });
                     }
                 });
             }).catch((error) => {
@@ -148,77 +142,6 @@
             }
 
             return this._users.map( (userID) => this._fetchUserWorklog(userID));
-        }
-
-        _createMonthDay(date=null){
-            // let day = document.getElementById("som-viewcalendar-template").content.cloneNode(true);
-
-            let day = document.createElement("article");
-            day.classList.add("monthday");
-
-            if(date){
-                let dateElem = document.createElement("p");
-                // let dateElem = day.querySelectorAll("p")[0];
-                dateElem.classList.add("date");
-                dateElem.textContent = date.getDate();
-                
-                // check if is first day of month
-                if(date.getDate() == 1){
-                    dateElem.textContent += " "+_MONTH[date.getMonth()];
-                    dateElem.classList.add("monthdate");
-                }
-
-                // check if today
-                if(date.setHours(0,0,0,0) == (new Date()).setHours(0,0,0,0)){
-                    dateElem.classList.add("today");
-                }
-
-                day.appendChild(dateElem);
-            }
-
-            return day;
-        }
-
-        _createDayWidget({text="", time=null, backgroundColor="#0000", borderColor="#00000000", username=null, proyect=null, initdate=null, enddate=null}){
-            let widget = document.createElement("label");
-
-            if(time){
-                let timeElm = document.createElement("span");
-                timeElm.classList.add("worklogtime");
-                timeElm.textContent = time;
-                widget.appendChild(timeElm);
-            }
-
-            widget.style.backgroundColor = backgroundColor;
-            widget.style.borderColor = borderColor;
-
-            let contentElm = document.createElement("span");
-            contentElm.classList.add("worklogcontent");
-            contentElm.textContent = text.trim().split("\n").join(" & ");
-            widget.appendChild(contentElm);
-
-            // append worklog dialog
-            let worklogDialogElem = document.createElement("som-worklogdialog");
-            worklogDialogElem.setAttribute("som-user", username);
-            worklogDialogElem.setAttribute("som-proyect", proyect);
-            worklogDialogElem.setAttribute("som-initdate", initdate);
-            worklogDialogElem.setAttribute("som-enddate", enddate);
-            worklogDialogElem.setAttribute("som-background", backgroundColor);
-            worklogDialogElem.setAttribute("som-info", text);
-            widget.appendChild(worklogDialogElem);
-            
-            widget.addEventListener("click", (evt) => {
-                if(worklogDialogElem.open){
-                    worklogDialogElem.close();
-                } else {
-                    worklogDialogElem.show();
-                    worklogDialogElem.moveTo(evt.clientX, evt.clientY);
-                }
-            })
-            
-
-            // widget.classList.add("monthday");
-            return widget;
         }
 
         constructor() {
@@ -249,9 +172,9 @@
 
             let currentDate = new Date(this._firstDate.getTime());
             for (let day = 0; day < 7 * this._weeks; day++) {
-                this._dayElems.push(this._createMonthDay(currentDate));
-                // this._dayElems[day].appendChild(this._createDayWidget({text: "hola "+day, time: "6h40"}));
+                this._dayElems.push(document.createElement("som-monthday"));
                 this._container.appendChild(this._dayElems[day]);
+                this._dayElems[day].setDate(currentDate);
 
                 currentDate.setDate(currentDate.getDate() +1);
             }
