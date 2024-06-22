@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\ItsMe;
 use App\Http\Controllers\WorklogController;
 use App\Http\Controllers\ProyectController;
 
@@ -26,7 +27,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/addworklog', [WorklogController::class, 'add']);
+Route::post('/addworklog', [WorklogController::class, 'add'])->middleware(ItsMe::class);;
+Route::post('/getuserworklog', [WorklogController::class, 'getUserWorklog']);
 
 Route::get('/getproyectinputs', [ProyectController::class, 'getNames']);
-Route::post('/getuserworklog', [WorklogController::class, 'getUserWorklog']);
+Route::post('/updateproyect', [ProyectController::class, 'addOrUpdate']);
