@@ -18,11 +18,24 @@ use App\Models\Proyect;
 
 class WorklogController extends Controller
 {
+    /**
+     * view controllers
+     */
+
     public function addView(Request $request): view {
         return view('addWorklog');
     }
+    
+    public function get(Request $request){
+        return view('viewWorklog');
+    }
 
-    public function add(Request $request): RedirectResponse {
+
+    /**
+     * api controllers
+     */
+
+    public function add(Request $request) {
         $validator = Validator::make($request->all(), [
             'start' => 'required|date',
             'end' => 'required|date',
@@ -49,13 +62,10 @@ class WorklogController extends Controller
             'description' => $request->description
         ]);
 
-        return redirect()->action([WorklogController::class, 'get']);
-        // return WorklogController::get($request);
-    }
+        return response('ACK', 200);
 
-    public function get(Request $request){
-        // return Worklog::all();
-        return view('viewWorklog');
+        // return redirect()->action([WorklogController::class, 'get']);
+        // return WorklogController::get($request);
     }
 
     public function getUserWorklog(Request $request){
