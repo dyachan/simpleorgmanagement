@@ -1,15 +1,27 @@
 @include('components.worklogDialog')
+@include('components.calendarLabel')
 <template id="som-viewcalendar-template">
     <style>
         * {
             box-sizing: border-box;
         }
 
-        .maincalendar{
+        :host{
+            position: relative;
+        }
+
+        .maincalendar, .labelcalendar{
             width: 100%;
             display: grid;
             grid-template-columns: 1fr repeat(5, 2fr) 1fr;
+            grid-template-rows: 30px repeat(6, 120px);
             gap: 5px 5px;
+        }
+
+        .labelcalendar {
+            position: absolute;
+            top: 0px;
+            left: 0px;
         }
 
         .maincalendar article{
@@ -27,7 +39,7 @@
             background-color: #0001;
         }
         .maincalendar article.monthday{
-            height: 100px;
+            height: 100%;
             background-color: #0002;
             justify-content: flex-start;
             position: relative;
@@ -86,6 +98,11 @@
         <article class="header">Jue</article>
         <article class="header">Vie</article>
         <article class="header">Sáb</article>
+    </section>
+    <section class="labelcalendar">
+      <som-calendarlabel som-gridcolumn="2 / 4" som-gridrow="2"></som-calendarlabel>
+      <som-calendarlabel som-gridcolumn="3 / 5" som-gridrow="3"></som-calendarlabel>
+      <som-calendarlabel som-gridcolumn="3 / 6" som-gridrow="2" som-offset="1"></som-calendarlabel>
     </section>
 </template>
 
@@ -239,6 +256,7 @@
         
         connectedCallback(){
 
+            // get first date of calendar
             this._firstDate = new Date();
             if(this.getAttribute("som-firstdate")){
                 this._firstDate = new Date(this.getAttribute("som-firstdate"));
@@ -247,27 +265,18 @@
                 this._firstDate.setDate(this._firstDate.getDate() - this._firstDate.getDay() - 7*Math.floor(this._weeks/2));
             }
 
+            // build calendar
             let currentDate = new Date(this._firstDate.getTime());
             for (let day = 0; day < 7 * this._weeks; day++) {
                 this._dayElems.push(this._createMonthDay(currentDate));
-                // this._dayElems[day].appendChild(this._createDayWidget({text: "hola "+day, time: "6h40"}));
                 this._container.appendChild(this._dayElems[day]);
 
                 currentDate.setDate(currentDate.getDate() +1);
             }
 
-            // this._changeAtt("view", this.getAttribute("som-view") || "week");
-
-            Promise.all(this._addUsersWorklogs()).then( () => {
-                // this._calendar = new tui.Calendar(this._container, this._options);
-                // // user calendars
-                // this._calendar.setOptions({
-                //     calendars: this._userCalendars
-                // });
-
-                // // add worklogs
-                // this._calendar.createEvents(this._userWorklogs);
-            });
+            // Promise.all(this._addUsersWorklogs()).then( () => {
+            //     // -
+            // });
         }
 
         attributeChangedCallback(name, oldValue, newValue) {

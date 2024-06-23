@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\Authenticate;
 use App\Http\Controllers\WorklogController;
 
 /*
@@ -24,10 +25,7 @@ Route::get('/logout', function () {
 
 Route::get('/addworklog', [WorklogController::class, 'addView']);
 
-// Route::get('/viewworklog', function () {
-//     return view('viewWorklog');
-// });
-Route::get('/viewworklog', [WorklogController::class, 'get']);
+Route::get('/viewworklog', [WorklogController::class, 'get'])->middleware(Authenticate::class);;
 
 Route::get('/addproyect', function () {
     return view('addProyect');
