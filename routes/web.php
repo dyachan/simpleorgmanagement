@@ -23,7 +23,6 @@ Route::get('/logout', function () {
 });
 
 Route::get('/addworklog', [WorklogController::class, 'addView']);
-Route::post('/addworklog', [WorklogController::class, 'add']);
 
 // Route::get('/viewworklog', function () {
 //     return view('viewWorklog');

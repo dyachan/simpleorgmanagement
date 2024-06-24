@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\Authenticate;
 use App\Http\Controllers\WorklogController;
 use App\Http\Controllers\ProyectController;
 
@@ -24,6 +25,8 @@ use App\Http\Controllers\ProyectController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/addworklog', [WorklogController::class, 'add']);
 
 Route::get('/getproyectinputs', [ProyectController::class, 'getNames']);
 Route::post('/getuserworklog', [WorklogController::class, 'getUserWorklog']);
