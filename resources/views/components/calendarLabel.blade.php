@@ -1,14 +1,40 @@
+@include('components.worklogDialog')
+
 <template id="som-calendarlabel-template">
   <style>
     .calendarlabel{
       display: flex;
       background-color: #0005;
+      min-height: 20px;
+      max-height: 20px;
       height: 20px;
       width: 100%;
+      border-radius: 3px;
+      padding: 3px;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-width: 0 0 0 thick;
+      border-style: solid;
+      border-color: #0000;
     }
+
+    label span.worklogtime{
+      font-style: italic;
+      font-size: small;
+      opacity: 0.6;
+      margin-right: 2px;
+    }
+
+
+
   </style>
     
   <label class="calendarlabel">
+    <span class="worklogtime"></span>
+    <span class="worklogcontent"></span>
+    <som-worklogdialog><som-worklogdialog>
   </label>
 </template>
 
@@ -21,15 +47,67 @@
       let templateContent = template.content;
 
       this._root = document.importNode(templateContent.cloneNode(true), true);
+      this._label = this._root.querySelectorAll(".calendarlabel")[0]; 
+      this._time = this._root.querySelectorAll(".worklogtime")[0];
+      this._content = this._root.querySelectorAll(".worklogcontent")[0];
+      this._dialog = this._root.querySelectorAll("som-worklogdialog")[0];
+
+    }
+
+    _build(){
+      this.changeAttrs(this.getAttribute("som-gridcolumn"), this.getAttribute("som-gridrow"), {
+        level: parseInt(this.getAttribute("som-level") || 0),
+        offset: parseInt(this.getAttribute("som-offset") || 0),
+        time: this.getAttribute("som-time") || "",
+        content: this.getAttribute("som-content") || ""
+      });
+    }
+
+    changeAttrs(gridcolumn, gridrow, {level=0, offset=0, time="", content="", username="", proyect="", initdate="", enddate="", backgroundColor="#0005"}){
+      if(!gridcolumn || !gridrow){
+        return;
+      }
+
+      // positionate
+      this.style.gridColumn = gridcolumn;
+      this.style.gridRow = (gridrow+1) +" / "+ (gridrow+1); // add 1 to skip calendar header
+      this.style.marginTop = ( offset + level * 21 )+"px";
+      
+      // content
+      this._time.textContent = time;
+      this._content.textContent = content;
+      this._label.style.backgroundColor = backgroundColor;
+      this._label.style.borderColor = getDeterministicColor(username);
+
+      // dialog
+      console.log(username, proyect, initdate, enddate, backgroundColor, content)
+      this._dialog.setAttribute("som-user", username);
+      this._dialog.setAttribute("som-proyect", proyect);
+      this._dialog.setAttribute("som-initdate", initdate);
+      this._dialog.setAttribute("som-enddate", enddate);
+      this._dialog.setAttribute("som-background", backgroundColor);
+      this._dialog.setAttribute("som-info", content);
+      this._dialog.connectedCallback(); // why I need do this?
+      this._label.addEventListener("click", (evt) => {
+          if(this._dialog.open){
+              this._dialog.close();
+          } else {
+              this._dialog.show();
+              this._dialog.moveTo(evt.clientX, evt.clientY);
+          }
+      })
+
     }
 
     connectedCallback(){
       this.appendChild(this._root);
-
-      this.style.gridColumn = this.getAttribute("som-gridcolumn");
-      this.style.gridRow = this.getAttribute("som-gridrow") +" / "+ this.getAttribute("som-gridrow");
-      this.style.marginTop = (25 + parseInt(this.getAttribute("som-offset") || 0)*21)+"px";
+      this._build();
     }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      this._build();
+    }
+
   }
 
   customElements.define("som-calendarlabel", SOM_CalendarLabelComponent);

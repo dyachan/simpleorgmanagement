@@ -1,5 +1,5 @@
-@include('components.calendarLabel')
 @include('components.monthday')
+@include('components.calendarLabel')
 <template id="som-viewcalendar-template">
     <style>
         * {
@@ -69,23 +69,8 @@
             background-color: #000F;
         }
 
-        .maincalendar article label{
-            width: 100%;
-            min-height: 20px;
-            border-width: medium;
-            border-style: solid;
-            cursor: pointer;
-
-            white-space: nowrap;
+        som-calendarlabel{
             overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .maincalendar article label span.worklogtime{
-            font-style: italic;
-            font-size: small;
-            opacity: 0.6;
-            margin-right: 2px;
         }
 
     </style>
@@ -100,9 +85,6 @@
         <article class="header">Sáb</article>
     </section>
     <section class="labelcalendar">
-      <som-calendarlabel som-gridcolumn="2 / 4" som-gridrow="2"></som-calendarlabel>
-      <som-calendarlabel som-gridcolumn="3 / 5" som-gridrow="3"></som-calendarlabel>
-      <som-calendarlabel som-gridcolumn="3 / 6" som-gridrow="2" som-offset="1"></som-calendarlabel>
     </section>
 </template>
 
@@ -132,18 +114,54 @@
                     let endDate = new Date(worklog.end);
                     let daysBetweenFirstDay = Math.floor((startDate - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
                     
-                    if(daysBetweenFirstDay >= 0 && daysBetweenFirstDay < 7 * this._weeks){
-                        this._dayElems[daysBetweenFirstDay].addWorklog({
-                            text: worklog.description,
+                    // check if must be added to calendar
+                    if(endDate > this._firstDate && startDate < this._lastDate){
+                        let label = document.createElement("som-calendarlabel");
+                        this._worklogs.push(label);
+                        this._labelContainer.appendChild(label);
+
+                        let startDateIndex = Math.floor((startDate.getTime() - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
+                        let endDateIndex = Math.floor((endDate.getTime() - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
+                        let daysBetween = Math.floor((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+
+                        let currentStartColumn = startDate.getDay();
+                        let currentEndColumn = Math.min(6, currentStartColumn + daysBetween)
+                        let currentRow = Math.floor(startDateIndex / 7);
+
+                        // update levels of day
+                        let maxLevel = 0;
+                        for (let index = startDateIndex; index <= endDateIndex; index++) {
+                            if(this._dayLevels[index] > maxLevel){
+                                maxLevel = this._dayLevels[index];
+                            }
+                            this._dayLevels[index]++;
+                        }
+
+                        label.changeAttrs((currentStartColumn+1) + " / " + (currentEndColumn+2), (currentRow+1), {
+                            level: maxLevel,
+                            offset: 25,
                             time: beautyDeltaTime(startDate, endDate),
-                            // borderColor: getDeterministicColor(data.user),
-                            backgroundColor: getDeterministicColor(worklog.proyect)+"CC",
+                            content: worklog.description,
                             username: data.user,
                             proyect: worklog.proyect,
                             initdate: beautyTime(startDate),
-                            enddate: beautyTime(endDate)
+                            enddate: beautyTime(endDate),
+                            backgroundColor: getDeterministicColor(worklog.proyect)+"CC"
                         });
                     }
+
+                    // if(daysBetweenFirstDay >= 0 && daysBetweenFirstDay < 7 * this._weeks){
+                    //     this._dayElems[daysBetweenFirstDay].addWorklog({
+                    //         text: worklog.description,
+                    //         time: beautyDeltaTime(startDate, endDate),
+                    //         // borderColor: getDeterministicColor(data.user),
+                    //         backgroundColor: getDeterministicColor(worklog.proyect)+"CC",
+                    //         username: data.user,
+                    //         proyect: worklog.proyect,
+                    //         initdate: beautyTime(startDate),
+                    //         enddate: beautyTime(endDate)
+                    //     });
+                    // }
                 });
             }).catch((error) => {
                 console.log("error", error);
@@ -170,11 +188,16 @@
             this._shadowRoot = this.attachShadow({ mode: "open" });
             this._shadowRoot.appendChild(templateContent.cloneNode(true));
 
-            this._container = this._shadowRoot.querySelectorAll("section")[0];
+            this._daysContainer = this._shadowRoot.querySelectorAll(".maincalendar")[0];
+            this._labelContainer = this._shadowRoot.querySelectorAll(".labelcalendar")[0];
 
             this._firstDate = null;
+            this._lastDate = null;
             this._weeks = 8;
             this._dayElems = [];
+            this._dayLevels = [];
+
+            this._worklogs = [];
         }
         
         connectedCallback(){
@@ -187,20 +210,26 @@
             } else {
                 this._firstDate.setDate(this._firstDate.getDate() - this._firstDate.getDay() - 7*Math.floor(this._weeks/2));
             }
+            this._firstDate.setHours(0);
+            this._firstDate.setMinutes(0);
+            this._firstDate.setSeconds(0);
 
             // build calendar
-            let currentDate = new Date(this._firstDate.getTime());
+            this._dayElems = [];
+            this._dayLevels = [];
+            this._lastDate = new Date(this._firstDate.getTime());
             for (let day = 0; day < 7 * this._weeks; day++) {
+                this._dayLevels.push(0);
                 this._dayElems.push(document.createElement("som-monthday"));
-                this._container.appendChild(this._dayElems[day]);
-                this._dayElems[day].setDate(currentDate);
+                this._daysContainer.appendChild(this._dayElems[day]);
+                this._dayElems[day].setDate(this._lastDate);
 
-                currentDate.setDate(currentDate.getDate() +1);
+                this._lastDate.setDate(this._lastDate.getDate() +1);
             }
 
-            // Promise.all(this._addUsersWorklogs()).then( () => {
-            //     // -
-            // });
+            Promise.all(this._addUsersWorklogs()).then( () => {
+                // -
+            });
         }
 
         attributeChangedCallback(name, oldValue, newValue) {

@@ -1,5 +1,3 @@
-@include('components.worklogDialog')
-
 <template id="som-monthday-template">
   <article class="monthday">
     <p class="date"></p>

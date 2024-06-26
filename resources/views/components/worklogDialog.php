@@ -89,6 +89,7 @@
       this._initdate = this._box.getElementsByClassName("initdate")[0];
       this._enddate = this._box.getElementsByClassName("enddate")[0];
     }
+
     connectedCallback(){
       // set border color for user
       let bcolor = "#0000";
@@ -117,6 +118,10 @@
       if(this.getAttribute("som-info")){
         this._info.textContent = this.getAttribute("som-info");
       }
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      this.connectedCallback();
     }
 
     // set position of box
