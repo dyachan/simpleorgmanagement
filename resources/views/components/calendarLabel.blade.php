@@ -26,9 +26,6 @@
       opacity: 0.6;
       margin-right: 2px;
     }
-
-
-
   </style>
     
   <label class="calendarlabel">
@@ -80,7 +77,6 @@
       this._label.style.borderColor = getDeterministicColor(username);
 
       // dialog
-      console.log(username, proyect, initdate, enddate, backgroundColor, content)
       this._dialog.setAttribute("som-user", username);
       this._dialog.setAttribute("som-proyect", proyect);
       this._dialog.setAttribute("som-initdate", initdate);

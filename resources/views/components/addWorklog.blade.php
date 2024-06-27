@@ -1,4 +1,26 @@
 <template id="som-addworklog-template">
+    <style>
+        som-addworklog{
+            background-color: #0005;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        form {
+            background-color: #FFFC;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
+
     <form action="/addworklog" method="POST">
         @csrf
         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
@@ -20,6 +42,7 @@
 </template>
 
 <script>
+    let ADDWORKLOGCOMPONENT = null;
     class SOM_AddWorklogComponent extends HTMLElement {
         _fetchProyects() {
             fetch("/api/getproyectinputs")
@@ -46,18 +69,39 @@
 
         constructor() {
             super();
+            ADDWORKLOGCOMPONENT = this;
+
+            this.open = false;
 
             let template = document.getElementById("som-addworklog-template");
             let templateContent = template.content;
 
-            this._shadowRoot = this.attachShadow({ mode: "open" });
-            this._shadowRoot.appendChild(templateContent.cloneNode(true));
+            this._root = document.importNode(templateContent.cloneNode(true), true);
 
-            this._proyectSelect = this._shadowRoot.querySelectorAll("select")[0];
+            this._proyectSelect = this._root.querySelectorAll("select")[0];
             this._cleanProyects();
 
             this._fetchProyects();
         }
+
+        connectedCallback(){
+            this.appendChild(this._root);
+        }
+
+        setAttributes({start=null, end=null, proyect_id=null, description=null, user_id=null}){
+            
+        }
+
+        show(){
+            this.open = true;
+            this.style.display = null;
+        }
+
+        close(){
+            this.open = false;
+            this.style.display = "none";
+        }
+
     }
 
     customElements.define("som-addworklog", SOM_AddWorklogComponent);

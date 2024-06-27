@@ -1,5 +1,6 @@
 @include('components.monthday')
 @include('components.calendarLabel')
+@include('components.addWorklog')
 <template id="som-viewcalendar-template">
     <style>
         * {
@@ -22,6 +23,7 @@
             position: absolute;
             top: 0px;
             left: 0px;
+            pointer-events: none;
         }
 
         .maincalendar article{
@@ -71,6 +73,7 @@
 
         som-calendarlabel{
             overflow: hidden;
+            pointer-events: auto;
         }
 
     </style>
@@ -86,6 +89,8 @@
     </section>
     <section class="labelcalendar">
     </section>
+
+    <som-addworklog id="addworklogcomponent" style="display: none;"></som-addworklog>
 </template>
 
 <script>
