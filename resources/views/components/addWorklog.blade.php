@@ -21,8 +21,9 @@
         }
     </style>
 
-    <form action="/addworklog" method="POST">
+    <form action="/api/addworklog" method="POST">
         @csrf
+        <input type="hidden" name="worklog_id">
         <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
         <label for="start">inicio:</label>
@@ -49,14 +50,15 @@
             .then((response) => response.json())
             .then(({data}) => {
                 data.forEach((proyect) => this._addProyect(proyect.id, proyect.name));
+                this._selectProyect("{{ old('proyect_id') }}");
             }).catch((error) => {
                 console.log("error", error);
             })
         }
 
         _cleanProyects(){
-            while (this._proyectSelect.firstChild) {
-                this._proyectSelect.removeChild(this._proyectSelect.lastChild);
+            while (this._input.proyect.firstChild) {
+                this._input.proyect.removeChild(this._input.proyect.lastChild);
             }
             this._addProyect(0, "-");
         }
@@ -64,7 +66,7 @@
             let opt = document.createElement('option');
             opt.value = value;
             opt.innerHTML = name;
-            this._proyectSelect.appendChild(opt);
+            this._input.proyect.appendChild(opt);
         }
 
         constructor() {
@@ -78,9 +80,16 @@
 
             this._root = document.importNode(templateContent.cloneNode(true), true);
 
-            this._proyectSelect = this._root.querySelectorAll("select")[0];
-            this._cleanProyects();
+            this._input = {
+                worklog: this._root.querySelectorAll("[name='worklog_id']")[0],
+                user: this._root.querySelectorAll("[name='user_id']")[0],
+                start: this._root.querySelectorAll("[name='start']")[0],
+                end: this._root.querySelectorAll("[name='end']")[0],
+                proyect: this._root.querySelectorAll("[name='proyect_id']")[0],
+                description: this._root.querySelectorAll("[name='description']")[0]
+            }
 
+            this._cleanProyects();
             this._fetchProyects();
         }
 
@@ -88,8 +97,33 @@
             this.appendChild(this._root);
         }
 
-        setAttributes({start=null, end=null, proyect_id=null, description=null, user_id=null}){
-            
+        _selectProyect(proyect_id){
+            for (let index = 0; index < this._input.proyect.children.length; index++) {
+                if(this._input.proyect.children.item(index).value == proyect_id){
+                    this._input.proyect.children.item(index).selected = true;
+                    break;
+                }
+            }
+        }
+
+        setAttributes({start=null, end=null, proyect_id=null, description=null, user_id=null, worklog_id=null}){
+            if(start){
+                this._input.start.value = start;
+            }
+            if(end){
+                this._input.end.value = end;
+            }
+            if(proyect_id){
+                this._selectProyect(proyect_id);
+            }
+            if(description){
+                this._input.description.value = description;
+            }
+            if(user_id){
+                this._input.user.value = user_id;
+            }
+
+            this._input.worklog.value = worklog_id; // always like to override worklog id
         }
 
         show(){

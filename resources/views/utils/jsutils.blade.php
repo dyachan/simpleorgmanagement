@@ -14,13 +14,17 @@
 
     /** return datetime as string format hh:mm */
     function beautyTime(datetime){
-        return twoDigits(datetime.getHours()) + ":" + twoDigits(datetime.getMinutes());
+        const d = new Date(datetime);
+        return twoDigits(d.getHours()) + ":" + twoDigits(d.getMinutes());
     }
     
     /** return datetime as string format hh:ss */
     function beautyDeltaTime(firstDatetime, lastDatetime){
+        const d1 = new Date(firstDatetime);
+        const d2 = new Date(lastDatetime);
+
         // get seconds
-        let delta = Math.floor(Math.abs(lastDatetime.getTime() - firstDatetime.getTime()) / 1000);
+        let delta = Math.floor(Math.abs(d2.getTime() - d1.getTime()) / 1000);
         let moduleOp = delta % 60 
         let beautyString = twoDigits(moduleOp) + "s";
 

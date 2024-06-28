@@ -1,5 +1,6 @@
 <template id="som-monthday-template">
   <article class="monthday">
+    <button class="createworklog">+</button>
     <p class="date"></p>
   </article>
 </template>
@@ -20,6 +21,16 @@
     connectedCallback(){
       this.appendChild(document.importNode(this.monthday_template.content.cloneNode(true), true));
       this._main = this.querySelectorAll("article")[0];
+      this._createWorklogButton = this.querySelectorAll("button")[0];
+
+      this._createWorklogButton.addEventListener("click", (evt) => {
+        ADDWORKLOGCOMPONENT.show()
+        let dateString = this.date.toJSON().split("T")[0]
+        ADDWORKLOGCOMPONENT.setAttributes({
+          start: dateString+"T00:00",
+          end: dateString+"T"+(new Date()).toJSON().split("T")[1].split(".")[0].split(":").slice(0, -1).join(":")
+        });
+      });
     }
 
     setDate(date){
@@ -36,13 +47,9 @@
       }
 
       // check if today
-      if(this.date == (new Date()).setHours(0,0,0,0)){
+      if(this.date.toDateString() == (new Date()).toDateString()){
           dateElem.classList.add("today");
       }
-
-      dateElem.addEventListener("click", () => {
-        ADDWORKLOGCOMPONENT.show()
-      });
     }
   }
 

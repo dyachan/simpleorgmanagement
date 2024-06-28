@@ -29,8 +29,8 @@
         .maincalendar article{
             width: 100%;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            flex-direction: row;
+            justify-content: flex-end;
             align-items: flex-start;
             gap: 2px;
             overflow: hidden;
@@ -43,24 +43,29 @@
         .maincalendar article.monthday{
             height: 100%;
             background-color: #0002;
-            justify-content: flex-start;
             position: relative;
         }
 
-        .maincalendar article.monthday p.date{
-            position: absolute;
+        .maincalendar article.monthday p.date,
+        .maincalendar article.monthday button.createworklog{
             min-width: 20px;
             min-height: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            top: 0px;
-            right: 0px;
             padding: 2px;
             margin: 2px;
             border-radius: 10px;
+            border-width: 0px;
             background-color: #0005;
             color: white;
+            font-size: small;
+        }
+        .maincalendar article.monthday button.createworklog{
+            cursor: pointer;
+        }
+        .maincalendar article.monthday button.createworklog:hover{
+            background-color: #000C;
         }
 
         .maincalendar article.monthday p.monthdate{
@@ -69,6 +74,19 @@
 
         .maincalendar article.monthday p.today{
             background-color: #000F;
+        }
+
+        .maincalendar article.monthday button.createworklog{
+            min-width: 20px;
+            min-height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2px;
+            margin: 2px;
+            border-radius: 10px;
+            background-color: #0005;
+            color: white;
         }
 
         som-calendarlabel{
@@ -149,9 +167,12 @@
                             content: worklog.description,
                             username: data.user,
                             proyect: worklog.proyect,
-                            initdate: beautyTime(startDate),
-                            enddate: beautyTime(endDate),
-                            backgroundColor: getDeterministicColor(worklog.proyect)+"CC"
+                            initdate: startDate.toJSON().split('.')[0].split(":").slice(0, -1).join(":"),
+                            enddate: endDate.toJSON().split('.')[0].split(":").slice(0, -1).join(":"),
+                            backgroundColor: getDeterministicColor(worklog.proyect)+"CC",
+                            user_id: userID,
+                            proyect_id: worklog.proyect_id,
+                            worklog_id: worklog.id
                         });
                     }
 

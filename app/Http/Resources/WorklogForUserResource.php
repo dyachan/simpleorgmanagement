@@ -17,6 +17,7 @@ class WorklogForUserResource extends JsonResource
         return [
             'id' => $this->id,
             'proyect' => $this->proyect->name,
+            'proyect_id' => $this->proyect->id,
             'start' => $this->start,
             'end' => $this->end,
             'description' => $this->description

@@ -60,7 +60,7 @@
       });
     }
 
-    changeAttrs(gridcolumn, gridrow, {level=0, offset=0, time="", content="", username="", proyect="", initdate="", enddate="", backgroundColor="#0005"}){
+    changeAttrs(gridcolumn, gridrow, {level=0, offset=0, content="", username="", proyect="", initdate="", enddate="", backgroundColor="#0005", user_id="0", proyect_id="0", worklog_id=null}){
       if(!gridcolumn || !gridrow){
         return;
       }
@@ -71,7 +71,7 @@
       this.style.marginTop = ( offset + level * 21 )+"px";
       
       // content
-      this._time.textContent = time;
+      this._time.textContent = beautyDeltaTime(initdate, enddate);
       this._content.textContent = content;
       this._label.style.backgroundColor = backgroundColor;
       this._label.style.borderColor = getDeterministicColor(username);
@@ -83,6 +83,9 @@
       this._dialog.setAttribute("som-enddate", enddate);
       this._dialog.setAttribute("som-background", backgroundColor);
       this._dialog.setAttribute("som-info", content);
+      this._dialog.setAttribute("som-proyectid", user_id);
+      this._dialog.setAttribute("som-userid", proyect_id);
+      this._dialog.setAttribute("som-worklogid", worklog_id);
       this._dialog.connectedCallback(); // why I need do this?
       this._label.addEventListener("click", (evt) => {
           if(this._dialog.open){

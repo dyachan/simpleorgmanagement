@@ -88,6 +88,18 @@
       this._proyect = this._box.getElementsByClassName("proyect")[0];
       this._initdate = this._box.getElementsByClassName("initdate")[0];
       this._enddate = this._box.getElementsByClassName("enddate")[0];
+      this._editbutton = this._box.querySelectorAll("button")[0];
+      this._editbutton.addEventListener("click", (evt) => {
+        ADDWORKLOGCOMPONENT.setAttributes({
+          start: this.getAttribute("som-initdate"),
+          end: this.getAttribute("som-enddate"),
+          proyect_id: this.getAttribute("som-proyectid"),
+          description: this.getAttribute("som-info"),
+          user_id: this.getAttribute("som-userid"),
+          worklog_id: this.getAttribute("som-worklogid")
+        });
+        ADDWORKLOGCOMPONENT.show()
+      });
     }
 
     connectedCallback(){
@@ -104,11 +116,11 @@
       }
 
       if(this.getAttribute("som-initdate")){
-        this._initdate.textContent = this.getAttribute("som-initdate");
+        this._initdate.textContent = beautyTime(this.getAttribute("som-initdate"));
       }
 
       if(this.getAttribute("som-enddate")){
-        this._enddate.textContent = this.getAttribute("som-enddate");
+        this._enddate.textContent = beautyTime(this.getAttribute("som-enddate"));
       }
 
       if(this.getAttribute("som-background")){
