@@ -20,7 +20,7 @@ class ItsMe
         // maybe add $request->id at end is a bad idea, because sometimes id can be another model.
         $commingId = $request->user_id || $request->userID || $request->userId || $request->user;
         $commingId = intval($commingId);
-        if(!$commingId || $request->user()->id != $commingId){
+        if(!$commingId || Auth::user()->id != $commingId){
             return response('Unauthorized '.$commingId." ".$request->user()->id, 401);
         }
         return $next($request);

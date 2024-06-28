@@ -143,6 +143,7 @@
                         this._worklogs.push(label);
                         this._labelContainer.appendChild(label);
 
+                        console.log((startDate.getTime() - this._firstDate.getTime()) / (24 * 60 * 60 * 1000), this._firstDate, worklog.start, startDate, worklog.end, endDate);
                         let startDateIndex = Math.floor((startDate.getTime() - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
                         let endDateIndex = Math.floor((endDate.getTime() - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
                         let daysBetween = Math.floor((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));

@@ -38,7 +38,7 @@
         <label for="description">descripción:</label>
         <textarea name="description" rows="4" cols="30">{{ old('description') }}</textarea>
 
-        <input type="submit" value="Ingresar">
+        <input type="button" value="Ingresar">
     </form> 
 </template>
 
@@ -69,6 +69,32 @@
             this._input.proyect.appendChild(opt);
         }
 
+        _save(){
+            const data = {
+                worklog_id: this._input.worklog.value,
+                user_id: this._input.user.value,
+                start: this._input.start.value,
+                end: this._input.end.value,
+                proyect_id: this._input.proyect.value,
+                description: this._input.description.value
+            };
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            };
+
+            fetch('/api/addworklog', options)
+            .then(data => {
+                location.reload();
+            }).catch((error) => {
+                console.log("error", error);
+            });
+        }
+
         constructor() {
             super();
             ADDWORKLOGCOMPONENT = this;
@@ -88,6 +114,10 @@
                 proyect: this._root.querySelectorAll("[name='proyect_id']")[0],
                 description: this._root.querySelectorAll("[name='description']")[0]
             }
+
+            this._root.querySelectorAll("input[type='button']")[0].addEventListener("click", (evt) => {
+                this._save();
+            }),
 
             this._cleanProyects();
             this._fetchProyects();
