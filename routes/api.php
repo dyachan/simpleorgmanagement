@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/addworklog', [WorklogController::class, 'add']);
+Route::post('/addworklog', [WorklogController::class, 'add'])->middleware(ItsMe::class);
 Route::post('/getuserworklog', [WorklogController::class, 'getUserWorklog']);
 
 Route::get('/getproyectinputs', [ProyectController::class, 'getNames']);

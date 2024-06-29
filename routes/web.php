@@ -25,7 +25,7 @@ Route::get('/logout', function () {
 
 Route::get('/addworklog', [WorklogController::class, 'addView']);
 
-Route::get('/viewworklog', [WorklogController::class, 'get'])->middleware(Authenticate::class);;
+Route::get('/viewworklog', [WorklogController::class, 'get'])->middleware(Authenticate::class);
 
 Route::get('/addproyect', function () {
     return view('addProyect');

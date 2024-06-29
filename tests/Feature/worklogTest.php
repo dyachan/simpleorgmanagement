@@ -33,6 +33,43 @@ class WorklogTest extends TestCase
   }
 
   /**
+   * test current user add a worklog for him
+   */
+  public function test_update_worklog(): void {
+    $this->_createUsers();
+    $this->_createProyects();
+
+    $user1 = User::first();
+    $proyect1 = Proyect::first();
+    $proyect2 = Proyect::latest()->first();
+
+    // create a worklogs
+    $worklog = Worklog::create([
+      'start' => "2024-06-21T08:00",
+      'end' => "2024-06-21T13:00",
+      'fk_user' => $user1->id,
+      'fk_proyect' => $proyect1->id,
+      'description' => "many tasks"
+    ]);
+
+    $this->assertTrue( Worklog::count() == 1 );
+
+    $response = $this->actingAs($user1)->post('/api/addworklog', [
+      'worklog_id' => $worklog->id,
+      'start' => "2024-06-21T08:00",
+      'end' => "2024-06-21T08:01",
+      'user_id' => $user1->id,
+      'proyect_id' => $proyect1->id,
+      'description' => "tbh i do nothing"
+    ]);
+
+    $response->assertStatus(200);
+    $this->assertTrue( Worklog::count() == 1 );
+    $worklog->refresh();
+    $this->assertTrue( $worklog->description == "tbh i do nothing" );
+  }
+
+  /**
    * test current user add a worklog for other
    */
   public function test_other_add_worklog(): void {

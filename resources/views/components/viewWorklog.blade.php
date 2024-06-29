@@ -133,8 +133,8 @@
                 // });
 
                 data.worklogs.forEach( (worklog) => {
-                    let startDate = new Date(worklog.start);
-                    let endDate = new Date(worklog.end);
+                    let startDate = new Date( isoFormatWithoutSeconds(worklog.start) );
+                    let endDate = new Date( isoFormatWithoutSeconds(worklog.end) );
                     let daysBetweenFirstDay = Math.floor((startDate - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
                     
                     // check if must be added to calendar
@@ -143,7 +143,6 @@
                         this._worklogs.push(label);
                         this._labelContainer.appendChild(label);
 
-                        console.log((startDate.getTime() - this._firstDate.getTime()) / (24 * 60 * 60 * 1000), this._firstDate, worklog.start, startDate, worklog.end, endDate);
                         let startDateIndex = Math.floor((startDate.getTime() - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
                         let endDateIndex = Math.floor((endDate.getTime() - this._firstDate.getTime()) / (24 * 60 * 60 * 1000));
                         let daysBetween = Math.floor((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
@@ -168,8 +167,8 @@
                             content: worklog.description,
                             username: data.user,
                             proyect: worklog.proyect,
-                            initdate: startDate.toJSON().split('.')[0].split(":").slice(0, -1).join(":"),
-                            enddate: endDate.toJSON().split('.')[0].split(":").slice(0, -1).join(":"),
+                            initdate: isoFormatWithoutSeconds(startDate.toJSON()),
+                            enddate: isoFormatWithoutSeconds(endDate.toJSON()),
                             backgroundColor: getDeterministicColor(worklog.proyect)+"CC",
                             user_id: userID,
                             proyect_id: worklog.proyect_id,

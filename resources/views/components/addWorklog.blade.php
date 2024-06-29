@@ -125,6 +125,12 @@
 
         connectedCallback(){
             this.appendChild(this._root);
+
+            this.addEventListener("click", (evt) => {
+                if(evt.target === this){
+                    this.close();
+                }
+            });
         }
 
         _selectProyect(proyect_id){

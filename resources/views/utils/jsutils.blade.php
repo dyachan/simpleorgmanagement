@@ -56,6 +56,10 @@
         return beautyString;
     }
 
+    function isoFormatWithoutSeconds(string){
+        return string.split(":").slice(0, -1).join(":");
+    }
+
     function getDeterministicColor(someString){
         let newWord = someString.toLowerCase();
         let randomNum = [
