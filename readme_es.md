@@ -45,9 +45,7 @@ Gestión Simple Organización es un servicio minimalista para monitorear persona
 - usuarios pueden ver sus proyectos actuales y pasados
 - poder visualizar el avance de cada proyecto y sus personas involucradas (a revisar)
 
-
+El estado actual resuelve los requerimientos 37 y 39 y avanza el requerimiento 38. 
+Estimaciones:
 - además a nivel de interfaz hay que unificar estilos (20h +- 10h)
 - API para comunicación (20h +- 10h)
-
-- esto resuelve los requerimientos 37 y 39
-- esto avanza el requerimiento 38
