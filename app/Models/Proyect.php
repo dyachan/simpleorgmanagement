@@ -17,6 +17,7 @@ class Proyect extends Model
     protected $fillable = [
         'name',
         'color',
+        'logo',
         'preview',
     ];
 

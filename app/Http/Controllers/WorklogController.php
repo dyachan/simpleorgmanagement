@@ -37,13 +37,12 @@ class WorklogController extends Controller
      */
 
     public function add(Request $request) {
-        Log::info("enter");
         $validator = Validator::make($request->all(), [
             'start' => 'required|date',
             'end' => 'required|date',
             'user_id' => 'required',
-            'proyect_id' => 'required|gt:0',
-            'description' => 'required'
+            'proyect_id' => 'required|gt:0'
+            // 'description' => 'required'
         ]);
 
         $validator->after(function ($validator) use ($request) {
@@ -56,7 +55,6 @@ class WorklogController extends Controller
 
         $validator->validate();
 
-        Log::info("valid");
         $worklog = null;
         if($request->worklog_id){
             $worklog = Worklog::get('id', $request->worklog_id)->first();
@@ -74,7 +72,6 @@ class WorklogController extends Controller
                 'description' => $request->description
             ]);
         } else {
-            Log::info("edit");
             $mustSave = false;
             if((new Carbon($request->start)) != $worklog->start){
                 $worklog->start = $request->start;
@@ -113,6 +110,10 @@ class WorklogController extends Controller
     }
 
     public function getUserWorklog(Request $request){
-        return new UserWorklogsResource(User::where("id", $request->userID)->first());
+        $user = User::where("id", $request->userID)->first();
+        if(!$user){
+            return response('User id not found', 404);
+        }
+        return new UserWorklogsResource($user);
     }
 }

@@ -166,12 +166,14 @@
                             time: beautyDeltaTime(startDate, endDate),
                             content: worklog.description,
                             username: data.user,
-                            proyect: worklog.proyect,
+                            proyect: worklog.proyect_name,
                             initdate: isoFormatWithoutSeconds(startDate.toJSON()),
                             enddate: isoFormatWithoutSeconds(endDate.toJSON()),
-                            backgroundColor: getDeterministicColor(worklog.proyect)+"CC",
+                            // backgroundColor: getDeterministicColor(worklog.proyect)+"CC",
+                            backgroundColor: getDeterministicColor(data.user)+"CC",
                             user_id: userID,
                             proyect_id: worklog.proyect_id,
+                            proyect_logo: worklog.proyect_logo,
                             worklog_id: worklog.id
                         });
                     }

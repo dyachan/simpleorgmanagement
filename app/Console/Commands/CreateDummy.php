@@ -116,10 +116,10 @@ class CreateDummy extends Command
         ];
 
         $proyects = [
-            Proyect::create(["name" => "camión minero"]),
-            Proyect::create(["name" => "grúa horquilla"]),
-            Proyect::create(["name" => "CEFOMIN"]),
-            Proyect::create(["name" => "tour virtual"])
+            Proyect::create(["name" => "camión minero", "logo" => "https://cdn-icons-png.flaticon.com/512/71/71452.png"]),
+            Proyect::create(["name" => "grúa horquilla", "logo" => "https://cdn-icons-png.flaticon.com/256/1580/1580355.png"]),
+            Proyect::create(["name" => "CEFOMIN", "logo" => "https://cefomin.cl/wp-content/uploads/2023/06/logotipo_cefomin-800.png"]),
+            Proyect::create(["name" => "tour virtual", "logo" => "https://cdn-icons-png.flaticon.com/512/5136/5136877.png"])
         ];
 
         for ($p=0; $p < 3; $p++) { 

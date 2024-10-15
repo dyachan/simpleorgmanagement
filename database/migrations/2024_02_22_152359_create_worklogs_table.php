@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('fk_proyect')->nullable();
             $table->foreign('fk_proyect')->references('id')->on('proyects');
 
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->dateTime('start');
             $table->dateTime('end');
         });

@@ -15,7 +15,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      border-width: 0 0 0 thick;
+      /* border-width: 0 0 0 thick; */
+      border-width: 0;
       border-style: solid;
       border-color: #0000;
     }
@@ -26,9 +27,14 @@
       opacity: 0.6;
       margin-right: 2px;
     }
+
+    img.worklogproyect{
+      height: 90%;
+    }
   </style>
     
   <label class="calendarlabel">
+    <img class="worklogproyect"></span>
     <span class="worklogtime"></span>
     <span class="worklogcontent"></span>
     <som-worklogdialog><som-worklogdialog>
@@ -45,6 +51,7 @@
 
       this._root = document.importNode(templateContent.cloneNode(true), true);
       this._label = this._root.querySelectorAll(".calendarlabel")[0]; 
+      this._proyectlogo = this._root.querySelectorAll(".worklogproyect")[0];
       this._time = this._root.querySelectorAll(".worklogtime")[0];
       this._content = this._root.querySelectorAll(".worklogcontent")[0];
       this._dialog = this._root.querySelectorAll("som-worklogdialog")[0];
@@ -60,7 +67,20 @@
       });
     }
 
-    changeAttrs(gridcolumn, gridrow, {level=0, offset=0, content="", username="", proyect="", initdate="", enddate="", backgroundColor="#0005", user_id="0", proyect_id="0", worklog_id=null}){
+    changeAttrs(gridcolumn, gridrow, {
+      level=0, 
+      offset=0, 
+      content="", 
+      username="", 
+      proyect="", 
+      initdate="", 
+      enddate="", 
+      backgroundColor="#0005", 
+      user_id="0", 
+      proyect_id="0", 
+      proyect_logo=null, 
+      worklog_id=null
+    }){
       if(!gridcolumn || !gridrow){
         return;
       }
@@ -71,10 +91,11 @@
       this.style.marginTop = ( offset + level * 21 )+"px";
       
       // content
+      this._proyectlogo.src = proyect_logo;
       this._time.textContent = beautyDeltaTime(initdate, enddate);
       this._content.textContent = content;
       this._label.style.backgroundColor = backgroundColor;
-      this._label.style.borderColor = getDeterministicColor(username);
+      // this._label.style.borderColor = getDeterministicColor(username);
 
       // dialog
       this._dialog.setAttribute("som-user", username);
